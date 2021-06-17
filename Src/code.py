@@ -5,6 +5,7 @@ from datetime import datetime
 import plotly.graph_objects as go
 import plotly.offline as py
 import plotly.io as pio
+import statsmodels.formula.api as smf
 
 # Load Data
 for dirname, _, filenames in os.walk('C:\\Users\\RenanSardinha\\Documents\\Data Science\\Projects\\Retail-Sales-Forecasting\\Data'):
@@ -32,7 +33,7 @@ plot_data = [go.Scatter(x = sales['data'], y = sales['venda'],)]
 plot_layout = go.Layout(title='Montly Sales')
 fig = go.Figure(data=plot_data, layout=plot_layout)
 fig.show()
-pio.write_html(fig, file='figure.html', auto_open=True)
+#pio.write_html(fig, file='figure.html', auto_open=True)
 
 # Diff
 df_diff = sales.copy()
@@ -48,10 +49,23 @@ print(df_diff)
 # Plot it again and check if it is stationary now:
 # Plot Sales diff
 plot_data = [go.Scatter(x=df_diff['data'], y=df_diff['diff'])]
-plot_layout = go.Layout(title='Montly Sales Diff')
+plot_layout = go.Layout(title='Diff Montly Sales')
 fig2 = go.Figure(data=plot_data, layout=plot_layout)
 fig2.show()
-pio.write_html(fig2, file='figure2.html', auto_open=True)
+#pio.write_html(fig2, file='figure2.html', auto_open=True)
 
+# Lock-back=12
+# lag_1 to lag_12
+# Create dataframe for transformation from time series to supervised
+df_supervised = df_diff.drop(['prev_sales'], axis=1)
+
+# Adding lags
+for inc in range(1,13):
+    field_name = 'lag_' + str(inc)
+    df_supervised[field_name] = df_supervised['diff'].shift(inc)
+
+# Drop null values
+df_supervised = df_supervised.dropna().reset_index(drop=True)
+print(df_supervised)
 
 
