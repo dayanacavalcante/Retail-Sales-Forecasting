@@ -124,6 +124,6 @@ I created columns from lag_1 to lag_12 and assigned values using the shift() met
 [18 rows x 15 columns]
 ```
 
+#### *Warning*
 
-
-
+The project is not finished.
